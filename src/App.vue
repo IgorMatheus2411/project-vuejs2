@@ -16,7 +16,7 @@
         <v-toolbar-items class="hidden-xs-only">
           <v-btn 
           text v-for="item in menuItems" 
-          :key="item.title" router
+          :key="item.title" 
           :to="item.link"
           >
             <v-icon left>{{item.icon}}</v-icon>
@@ -32,7 +32,6 @@
             :key="item.title"
             >
               <v-list-item  
-              router
               :to="item.link"
               >
               <!-- ':' is to dynamic value -->
@@ -44,7 +43,6 @@
       </v-navigation-drawer>
 
     <v-main>
-
       <router-view></router-view>
 
     </v-main>
