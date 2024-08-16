@@ -11,11 +11,13 @@
 
         <v-layout row wrap class="justify"> 
             <v-flex xs12  >
-                <v-carousel >
+                <v-carousel style="cursor: pointer;" >
                     <v-carousel-item
                     v-for="meetup in meetups"
                     :key="meetup.id"
-                    :src="meetup.src"  >
+                    :src="meetup.src" 
+                    @click="onLoadMeetup(meetup.id)"
+                    >
                     <div class="title">
                         {{ meetup.title }}
                     </div>
@@ -37,10 +39,15 @@
         data () {
             return {
                 meetups: [
-                    { src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', id:'1aa23', title:'esquilo'},
-                    { src:'https://cdn.vuetifyjs.com/images/carousel/sky.jpg', id:'1aa23', title:'Lago' },
-                    { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', id: '1aa23', title: 'Imagem progama' },
+                    { src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', id:'01', title:'esquilo'},
+                    { src:'https://cdn.vuetifyjs.com/images/carousel/sky.jpg', id:'02', title:'Lago' },
+                    { src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', id: '03', title: 'Imagem progama' },
             ]
+            }
+        },
+        methods: {
+            onLoadMeetup(id) {
+                this.$router.push('/meetup/' + id);
             }
         }
     }
