@@ -8,7 +8,7 @@
                     </v-card-title>
                     <v-img
                         height="400px"
-                        :src="meetup.src"
+                        :src="meetup.imageUrl"
                     ></v-img>
                     <v-card-text>
                         <div class="primary--text">{{ meetup.date}}</div>

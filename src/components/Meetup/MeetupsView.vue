@@ -8,7 +8,7 @@
                         <v-flex xs5 sm4 md4 >
                             <v-img
                             height="130px"
-                            :src="meetup.src"
+                            :src="meetup.imageUrl"
                             ></v-img>
                         </v-flex>
 
