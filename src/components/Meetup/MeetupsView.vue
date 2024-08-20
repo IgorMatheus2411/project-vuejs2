@@ -1,14 +1,14 @@
 <template>
     <v-container>
-    <v-layout row wrap>
+    <v-layout row wrap  v-for="meetup in meetups" :key="meetup.id" class="mb-2" >
         <v-flex xs12 sm10 md8 offset-sm1 offset-md2 mt-5>
-            <v-card class="info" >
+            <v-card class="info">
                 <v-container fluid>
                     <v-layout row pa-5>
                         <v-flex xs5 sm4 md4 >
                             <v-img
                             height="130px"
-                            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                            :src="meetup.src"
                             ></v-img>
                         </v-flex>
 
@@ -16,14 +16,14 @@
                             <v-card-title primary-title>
  
                                 <div>
-                                    <h5 class="white--text mb-0">My Meetup</h5>
-                                    <div>16 Agosto</div>
-                                </div>
+                                    <h5 class="white--text mb-0">{{ meetup.title }}</h5>
+                                    <div>{{ meetup.date }}</div>
+                                </div> 
                             </v-card-title>
                         
 
                         <v-card-actions>
-                            <v-btn flat to="/meetup/">
+                            <v-btn flat :to="'/meetup/' + meetup.id">
                                 <v-icon left>mdi-arrow-right</v-icon>
                                 View Meetup
                             </v-btn>
@@ -36,3 +36,13 @@
     </v-layout>
   </v-container>
 </template>
+
+<script>
+    export default {
+        computed: {
+    meetups() {
+      return this.$store.getters.loadedMeetups;
+    }
+  }
+}
+</script>
