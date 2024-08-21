@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { auth } from '../firebaseConfig'
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 
 Vue.use(Vuex)
 
@@ -21,10 +24,7 @@ export const store = new Vuex.Store({
         description: 'I am software developer'
       },
     ],
-    user: {
-      id: '2132',
-      registeredMeetups: ['abcd']
-    },
+    user: null
   }, 
   getters: {
     loadedMeetups (state) {
@@ -41,14 +41,22 @@ export const store = new Vuex.Store({
           return meetup.id === meetupId
         })
       }
+    },
+    user (state) {
+      return state.user
     }
   },
   mutations: {
     createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    //Atualizar as informações do usuário.
+    setUser (state, payload) {
+      state.user = payload
     }
   },
   actions: {
+    // Criar um novo meetup e adicionar à lista.
     createMeetup({ commit }, payload) {
       const meetup = {
         title: payload.title,
@@ -59,8 +67,27 @@ export const store = new Vuex.Store({
         id: 'akakakaka'
       }
       // entre em contato com o firebase e armazene isso
+      // commit: Função para chamar mutations.
       commit('createMeetup', meetup)
+    },
+      //Registrar um novo usuário com email e senha usando Firebase. IMPORTANTISSIMO
+    signUserUp ({commit}, payload) {
+      createUserWithEmailAndPassword(auth, payload.email, payload.password)
+        .then(
+          user => {
+            const newUser = {
+              id: user.uid,
+              registeredMeetups: []
+            }
+            commit('setUser', newUser)
+          }
+        ).catch( error =>{
+          console.error(error.message)
+          alert("An error occurred: " + error.message);
+        })
+
     }
+
   },
  
 })

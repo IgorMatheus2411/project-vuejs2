@@ -1,96 +1,85 @@
 <template>
     <v-container>
-        <v-layout row>
-            <v-flex xs12 sm6 offset-sm3 mt-5 mb-5>
-                <h2 class="secondary--text">Create a new Meetup</h2>
-            </v-flex>
-        </v-layout>
-        <v-layout row>
-            <v-flex xs12>
+        <v-row justify="center" class="mb-5">
+            <v-col cols="12" sm="8" md="6">
+                <h2 class="secondary--text text-center">Create a new Meetup</h2>
+            </v-col>
+        </v-row>
+
+        <v-row justify="center">
+            <v-col cols="12" sm="8" md="6">
                 <form @submit.prevent="onCreateMeetup">
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                                <v-text-field
-                                    name="title"
-                                    id="title"
-                                    label="Title"
-                                    v-model="title"
-                                    required
-                                ></v-text-field>
-                        </v-flex>
-                    </v-layout>
+                    <v-text-field
+                        name="title"
+                        id="title"
+                        label="Title"
+                        v-model="title"
+                        required
+                        class="mb-4"
+                    ></v-text-field>
 
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                                <v-text-field
-                                    name="location"
-                                    id="location"
-                                    v-model="location"
-                                    label="Location"
-                                    required
-                                ></v-text-field>
-                        </v-flex>
-                    </v-layout>
+                    <v-text-field
+                        name="location"
+                        id="location"
+                        v-model="location"
+                        label="Location"
+                        required
+                        class="mb-4"
+                    ></v-text-field>
 
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                                <v-text-field
-                                    name="imageUrl"
-                                    id="image-Url"
-                                    v-model="imageUrl"
-                                    label="Image URL"
-                                    required
-                                ></v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                               <img :src="imageUrl" height="150">
-                        </v-flex>
-                    </v-layout>
+                    <v-text-field
+                        name="imageUrl"
+                        id="image-Url"
+                        v-model="imageUrl"
+                        label="Image URL"
+                        required
+                        class="mb-4"
+                    ></v-text-field>
 
-                    <v-layout row>
-                        <v-flex xs12 sm6 offset-sm3>
-                                <v-text-field
-                                    name="description"
-                                    id="description"
-                                    v-model="description"
-                                    label="Description"
-                                    multi-line
-                                    required
-                                ></v-text-field>
-                        </v-flex>
-                    </v-layout>
-                    <v-row>
-                        <v-flex xs12 sm6 offset-sm3>
-                            <h4>Choose a Data & Time</h4>
-                        </v-flex>
+                    <v-img :src="imageUrl" height="150" class="mb-4" v-if="imageUrl"></v-img>
+
+                    <v-text-field
+                        name="description"
+                        id="description"
+                        v-model="description"
+                        label="Description"
+                        multi-line
+                        required
+                        class="mb-4"
+                    ></v-text-field>
+
+                    <v-row class="mb-5" align="center">
+                        <v-col cols="12">
+                            <h4 class="text-center">Choose a Date & Time</h4>
+                        </v-col>
                     </v-row>
-                    <v-row class="mb-5">
-                        <v-flex xs12 sm6 offset-sm3 >
+
+                    <v-row class="mb-5" justify="center">
+                        <v-col cols="12" sm="8" md="6">
                             <v-date-picker v-model="date"></v-date-picker>
-                        </v-flex>
-                    </v-row> 
-                    <v-row class="mb-10">
-                        <v-flex xs12 sm6 offset-sm3 >
-                            <v-time-picker ampm-in-title v-model="time" format="24hr"></v-time-picker>
-                        </v-flex>
+                        </v-col>
                     </v-row>
 
+                    <v-row class="mb-10" justify="center">
+                        <v-col cols="12" sm="8" md="6">
+                            <v-time-picker ampm-in-title v-model="time" format="24hr"></v-time-picker>
+                        </v-col>
+                    </v-row>
 
-                    <v-layout row class="justify-end" >
-                        <v-flex xs12 sm6 offset-sm3>
+                    <v-row class="justify-end">
+                        <v-col cols="12" sm="auto">
                             <v-btn 
                                 class="primary" 
                                 :disabled="!formIsValid"
                                 type="submit"
                             >
-                            Create Meetup</v-btn>
-                        </v-flex>
-                    </v-layout>
+                            Create Meetup
+                            </v-btn>
+                        </v-col>
+                    </v-row>
                 </form>
-            </v-flex>
-        </v-layout>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
