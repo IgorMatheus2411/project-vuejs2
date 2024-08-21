@@ -9,12 +9,16 @@ export const store = new Vuex.Store({
       { imageUrl: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
         id:'01', 
         title:'esquilo',
-        date: '2024-08-17'
+        date: new Date(),
+        location: 'Sorocaba',
+        description: 'I am an animal'
       },
       { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', 
         id: '03', 
         title: 'Imagem progama',
-        date: '2024-08-19' 
+        date: new Date(),
+        location: 'São Paulo',
+        description: 'I am software developer'
       },
     ],
     user: {

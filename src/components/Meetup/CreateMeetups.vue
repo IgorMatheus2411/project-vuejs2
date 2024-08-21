@@ -7,7 +7,7 @@
         </v-layout>
         <v-layout row>
             <v-flex xs12>
-                <form @submit.prevent="onCreateMeeetup">
+                <form @submit.prevent="onCreateMeetup">
                     <v-layout row>
                         <v-flex xs12 sm6 offset-sm3>
                                 <v-text-field
@@ -69,13 +69,11 @@
                     <v-row class="mb-5">
                         <v-flex xs12 sm6 offset-sm3 >
                             <v-date-picker v-model="date"></v-date-picker>
-                            <p> {{ date }}</p>
                         </v-flex>
                     </v-row> 
                     <v-row class="mb-10">
                         <v-flex xs12 sm6 offset-sm3 >
-                            <v-time-picker v-model="time"></v-time-picker>
-                            <p> {{ time }}</p>
+                            <v-time-picker ampm-in-title v-model="time" format="24hr"></v-time-picker>
                         </v-flex>
                     </v-row>
 
@@ -86,7 +84,6 @@
                                 class="primary" 
                                 :disabled="!formIsValid"
                                 type="submit"
-                                
                             >
                             Create Meetup</v-btn>
                         </v-flex>
@@ -105,7 +102,7 @@
                 location: '',
                 imageUrl: '',
                 description: '',
-                date: new Date(),
+                date: new Date().toISOString().substr(0, 10), // Converte para 'YYYY-MM-DD'
                 time: new Date()
             }
         },
@@ -115,24 +112,38 @@
                 this.location !== '' && 
                 this.imageUrl !== '' && 
                 this.description !== '' 
+            },
+            submittableDateTime () {
+                const date = new Date (this.date)
+                if (typeof this.time === 'string') {
+                    const hours = this.time.match(/^(\d+)/) [1]
+                    const minutes = this.time.match(/:(\d+)/) [1]
+                    date.setHours(hours)
+                    date.setMinutes(minutes)
+                } else {
+                date.setHours(this.time.getHours())
+                date.setMinutes(this.time.getMinutes())
+                }
+                return date
             }
         },
+        // Methods você define funções dentro de um componente. 
         methods: {
-            onCreateMeeetup() {
-                 //validação de formulario
-                if (!this.formIsValid) {
-                    return 
-                }
-                //armazena todos os dados de  DATA()
-                const meetupData = {
-                    title: this.title,
-                    location: this.location,
-                    imageUrl: this.imageUrl,
-                    description: this.description,
-                    date: new Date
-                }
-                this.$store.dispatch('createMeetup', meetupData)
-                this.$router.push('/meetup')
+            onCreateMeetup() {
+            if (!this.formIsValid) {
+                return;
+            }
+
+            const meetupData = {
+                title: this.title,
+                location: this.location,
+                imageUrl: this.imageUrl,
+                description: this.description,
+                date: this.submittableDateTime
+            };
+
+            this.$store.dispatch('createMeetup', meetupData);
+            this.$router.push('/meetup');
             }
         }
     }

@@ -11,9 +11,8 @@
                         :src="meetup.imageUrl"
                     ></v-img>
                     <v-card-text>
-                        <div class="primary--text">{{ meetup.date}}</div>
-                        <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente expedita recusandae neque repellendus nobis excepturi,
-                             eligendi error ducimus. Dolore ratione quaerat inventore totam. Hic ut quibusdam architecto debitis quod temporibus!</div>
+                        <div class="primary--text">{{ meetup.date | date }} - {{ meetup.location }}</div>
+                        <div> {{ meetup.description }}</div>
                     </v-card-text>
                     <v-card-action class="d-flex justify-end">
                         <v-btn right class="primary">Register</v-btn>
