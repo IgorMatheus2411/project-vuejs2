@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { auth } from '../firebaseConfig'
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
 Vue.use(Vuex)
@@ -81,11 +81,29 @@ export const store = new Vuex.Store({
             }
             commit('setUser', newUser)
           }
-        ).catch( error =>{
-          console.error(error.message)
-          alert("An error occurred: " + error.message);
-        })
-
+        ).catch( 
+          error =>{
+            console.error(error.message)
+            alert("An error occurred: " + error.message);
+        }
+      )
+    },
+    signUserIn ({commit}, payload) {
+      signInWithEmailAndPassword(auth, payload.email, payload.password)
+        .then(
+          user => {
+            const newUser = {
+              id: user.uid,
+              registeredMeetups: []
+            }
+            commit('setUser', newUser)
+          }
+        ).catch( 
+          error =>{
+            console.error(error.message)
+            alert("An error occurred: " + error.message);
+        }
+      )
     }
 
   },
