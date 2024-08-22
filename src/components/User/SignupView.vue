@@ -45,16 +45,31 @@
                             </v-layout>
                             <v-layout row>
                                 <v-flex xs12 class="d-flex justify-end">
-                                    <v-btn type="submit">Sign up</v-btn>
+                                    <v-btn 
+                                    class="buttonLoader"
+                                    type="submit"
+                                    :disabled="loading"
+                                    :loading="loading"
+                                   
+                                    >
+                                        Sign up
+                                    </v-btn>
                                 </v-flex>
                             </v-layout>
+                            
                         </form>
-                        
                     </v-container>
                 </v-card-text>
             </v-flex>
         </v-layout>
+        <v-layout v-if="error" row justify-center align-center>
+            <v-flex style="max-width: 400px; width: 100%;">
+                <app-alert @dismissed="onDismissed" :text="error.message">
+                </app-alert>
+            </v-flex>
+        </v-layout>
     </v-container>
+    
 </template>
 
 <script>
@@ -64,6 +79,7 @@
                 email: '',
                 password: '',
                 confirmPassword: '',
+        
             }
         },
         computed: {
@@ -72,7 +88,11 @@
             },
             user () {
                 return this.$store.getters.user
-            }
+            },
+            error () {
+                return this.$store.getters.error
+            },
+            
         },
         // ELA VAI FICAR OBSERVANDO O COM PUTED (USER) QUE ESTA NO GETTER NA STORE, 
         // TODA VEZ Q MUDAR VAI OBTE-LA COM O VALOR
@@ -81,13 +101,23 @@
                 if (value !== null && value !== undefined) {
                     this.$router.push('/')
                 }
-            }
+            },
         },
         methods: {
             onSignup() {
+                
                 // Vuex
                 this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
+            },
+            onDismissed() {
+                console.log('Dismissed ALert!')
+                this.$store.dispatch('clearError')
             }
-        }
+        },
+    
+
+            
+     
     }
 </script>
+
