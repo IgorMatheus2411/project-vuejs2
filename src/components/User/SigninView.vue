@@ -43,6 +43,12 @@
                 </v-card-text>
             </v-flex>
         </v-layout>
+        <v-layout v-if="error" row justify-center align-center>
+            <v-flex style="max-width: 400px; width: 100%;">
+                <app-alert @dismissed="onDismissed" :text="error.message">
+                </app-alert>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -57,7 +63,13 @@
         computed: {
             user () {
                 return this.$store.getters.user
-            }
+            },
+            error () {
+                return this.$store.getters.error
+            },
+            loading () {
+                return this.$store.getters.loading
+            },
         },
         // ELA VAI FICAR OBSERVANDO O COM PUTED (USER) QUE ESTA NO GETTER NA STORE, 
         // TODA VEZ Q MUDAR VAI OBTE-LA COM O VALOR
@@ -72,7 +84,11 @@
             onSignin() {
                 // Vuex
                 this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
+            },
+            onDismissed() {
+                this.$store.dispatch('clearError')
             }
+
         }
     }
 </script>

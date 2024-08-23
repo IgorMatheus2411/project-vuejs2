@@ -9,7 +9,8 @@
             </v-flex>
         </v-layout>
 
-        <v-layout row wrap class="justify"> 
+
+        <v-layout row wrap class="mt-5" > 
             <v-flex xs12  >
                 <v-carousel style="cursor: pointer;" >
                     <v-carousel-item

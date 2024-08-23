@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { auth } from '../firebaseConfig'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { ref, push, get} from 'firebase/database';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, database } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
+
 
 
 Vue.use(Vuex)
@@ -55,6 +57,9 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
+    setLoadedMeetups (state, payload){
+      state.loadedMeetups = payload
+    },
     createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
     },
@@ -73,6 +78,33 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    loadeMeetups ({commit}) {
+      commit('setLoading', true)
+
+      const meetupsRef = ref(database, 'meetups');
+      get(meetupsRef)
+        .then((data) => {
+          const meetups = []
+          const obj = data.val()
+          for (let key in obj) {
+            meetups.push( {
+              id: key,
+              title: obj [key].title,
+              description: obj [key].description,
+              imageUrl: obj [key].imageUrl,
+              date: obj [key].date,
+            })
+          }
+          commit('setLoadedMeetups', meetups)
+          commit('setLoading', false)
+        })
+        .catch(
+          (error) => {
+            console.log(error)
+            commit('setLoading', true)
+          }
+        )
+    },
     // Criar um novo meetup e adicionar à lista.
     createMeetup({ commit }, payload) {
       const meetup = {
@@ -80,12 +112,27 @@ export const store = new Vuex.Store({
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date,
-        id: 'akakakaka'
+        date: payload.date.toISOString()
       }
+
+      //ERRADO === firebase.database().ref('meetups').push(meetup)
+
+      // Cria uma referência para o local onde os meetups serão armazenados
+      const meetupsRef = ref(database, 'meetups');
+
+      push(meetupsRef, meetup)
+        .then((data) => {
+          const key = data.key
+          commit('createMeetup', {
+            ...meetup,
+            id: key
+          })
+        })
+        .catch((error) =>{
+          console.log(error);
+        })
       // entre em contato com o firebase e armazene isso
       // commit: Função para chamar mutations.
-      commit('createMeetup', meetup)
     },
       //Registrar um novo usuário com email e senha usando Firebase. IMPORTANTISSIMO
     signUserUp ({commit}, payload) {

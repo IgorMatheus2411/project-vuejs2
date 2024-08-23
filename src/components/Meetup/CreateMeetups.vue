@@ -113,7 +113,7 @@
                 date.setHours(this.time.getHours())
                 date.setMinutes(this.time.getMinutes())
                 }
-                return date
+                return date; 
             }
         },
         // Methods você define funções dentro de um componente. 
@@ -130,9 +130,9 @@
                 description: this.description,
                 date: this.submittableDateTime
             };
-
-            this.$store.dispatch('createMeetup', meetupData);
-            this.$router.push('/meetup');
+            console.log('Meetup data:', meetupData);
+                this.$store.dispatch('createMeetup', meetupData)
+                this.$router.push('/meetup')
             }
         }
     }

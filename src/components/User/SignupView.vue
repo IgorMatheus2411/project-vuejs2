@@ -45,13 +45,7 @@
                             </v-layout>
                             <v-layout row>
                                 <v-flex xs12 class="d-flex justify-end">
-                                    <v-btn 
-                                    class="buttonLoader"
-                                    type="submit"
-                                    :disabled="loading"
-                                    :loading="loading"
-                                   
-                                    >
+                                    <v-btn type="submit">
                                         Sign up
                                     </v-btn>
                                 </v-flex>
@@ -92,7 +86,9 @@
             error () {
                 return this.$store.getters.error
             },
-            
+            loading () {
+                return this.$store.getters.loading
+            },
         },
         // ELA VAI FICAR OBSERVANDO O COM PUTED (USER) QUE ESTA NO GETTER NA STORE, 
         // TODA VEZ Q MUDAR VAI OBTE-LA COM O VALOR
@@ -105,12 +101,10 @@
         },
         methods: {
             onSignup() {
-                
                 // Vuex
                 this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
             },
             onDismissed() {
-                console.log('Dismissed ALert!')
                 this.$store.dispatch('clearError')
             }
         },
