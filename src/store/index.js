@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ref, push, get} from 'firebase/database';
+import { uploadBytes, getDownloadURL, ref as refS } from 'firebase/storage';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth, database } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
+import { auth, database, storage } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
 
 
 
@@ -108,13 +109,34 @@ export const store = new Vuex.Store({
         )
     },
     // Criar um novo meetup e adicionar à lista.
-    createMeetup({ commit, getters }, payload) {
+    async createMeetup({ commit, getters }, payload) {
+
+      if (!payload.image) {
+        console.error('Imagem não fornecida')
+        return
+      }
+
+      let imageUrl = '';
+
+      const filename = payload.image.name
+      const fileRef = refS(storage, 'meetups/' + filename)
+
+      await uploadBytes(fileRef, payload.image).then(() => {
+        const filename = payload.image.name
+        const fileRef = refS(storage, 'meetups/' + filename)
+        return getDownloadURL(fileRef)
+      }).then((url) => {
+        imageUrl = url;
+      }).catch(() => {
+        console.log('ERRO')
+      });
+
       const meetup = {
         title: payload.title,
         location: payload.location,
-        imageUrl: payload.imageUrl,
         description: payload.description,
         date: payload.date.toISOString(),
+        imageUrl,
         creatorId: getters.user.id
       }
 
@@ -122,16 +144,14 @@ export const store = new Vuex.Store({
 
       // Cria uma referência para o local onde os meetups serão armazenados
       const meetupsRef = ref(database, 'meetups');
-
       push(meetupsRef, meetup)
         .then((data) => {
-          const key = data.key
           commit('createMeetup', {
             ...meetup,
-            id: key
+            imageUrl,
+            id: data.key
           })
-        })
-        .catch((error) =>{
+        }).catch((error) =>{
           console.log(error);
         })
       // entre em contato com o firebase e armazene isso

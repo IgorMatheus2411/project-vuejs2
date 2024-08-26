@@ -27,16 +27,17 @@
                         class="mb-4"
                     ></v-text-field>
 
-                    <v-text-field
-                        name="imageUrl"
-                        id="image-Url"
-                        v-model="imageUrl"
-                        label="Image URL"
-                        required
-                        class="mb-4"
-                    ></v-text-field>
+                    <!-- IMAGEM UPLOAD -->
+                    <v-btn raised class="accent" @click="onPickFile">Upload Image</v-btn>
+                    <input 
+                    type="file" 
+                    style="display: none" 
+                    ref="fileInput" 
+                    accept="image/*"
+                    @change="onFilePicked"
+                    >
 
-                    <v-img :src="imageUrl" height="150" class="mb-4" v-if="imageUrl"></v-img>
+                    <v-img :src="imageUrl" height="150" class="mb-4 mt-4" v-if="imageUrl"></v-img>
 
                     <v-text-field
                         name="description"
@@ -92,7 +93,8 @@
                 imageUrl: '',
                 description: '',
                 date: new Date().toISOString().substr(0, 10), // Converte para 'YYYY-MM-DD'
-                time: new Date()
+                time: new Date(),
+                image: null
             }
         },
         computed: {
@@ -122,17 +124,36 @@
             if (!this.formIsValid) {
                 return;
             }
-
+            if (!this.image) {
+                return
+            }
             const meetupData = {
                 title: this.title,
                 location: this.location,
                 imageUrl: this.imageUrl,
                 description: this.description,
-                date: this.submittableDateTime
+                date: this.submittableDateTime, 
+                image: this.image
             };
-            console.log('Meetup data:', meetupData);
                 this.$store.dispatch('createMeetup', meetupData)
                 this.$router.push('/meetup')
+            },
+            onPickFile () {
+                this.$refs.fileInput.click()
+            },
+            // ver imagem e verificar a imagem
+            onFilePicked (event) {
+                const files = event.target.files
+                let filename = files[0].name
+                if (filename.lastIndexOf('') <= 0) {
+                    return alert ('Please Add a valid file!')
+                }
+                const fileReader = new FileReader()
+                fileReader.addEventListener('load', () => {
+                    this.imageUrl = fileReader.result
+                })
+                fileReader.readAsDataURL(files[0])
+                this.image = files[0]
             }
         }
     }

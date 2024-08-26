@@ -24,7 +24,7 @@
           </v-btn>
           <v-btn 
           v-if="userIsAuthenticated"
-          flat 
+          text 
           @click="onLogout"
           >
             <v-icon left>mdi-exit-to-app</v-icon>
