@@ -22,6 +22,14 @@
             <v-icon left>{{item.icon}}</v-icon>
             {{item.title}}
           </v-btn>
+          <v-btn 
+          v-if="userIsAuthenticated"
+          flat 
+          @click="onLogout"
+          >
+            <v-icon left>mdi-exit-to-app</v-icon>
+           Logout
+          </v-btn>
         </v-toolbar-items>
       </v-app-bar>
 
@@ -37,6 +45,16 @@
               <!-- ':' is to dynamic value -->
                 <v-icon left>{{item.icon}}</v-icon>
                 <v-list-item-content>{{ item.title }}</v-list-item-content>
+              </v-list-item>
+          </v-list-item-group>
+
+          <v-list-item-group  
+          v-if="userIsAuthenticated"
+          >
+              <v-list-item>
+              <!-- ':' is to dynamic value -->
+                <v-icon left >mdi-exit-to-app</v-icon>
+                <v-list-item-content>Logout</v-list-item-content>
               </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -74,6 +92,11 @@ export default {
     },
     userIsAuthenticated () {
       return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+    }
+  },
+  methods: {
+    onLogout () {
+      this.$store.dispatch('logout')
     }
   }
 }

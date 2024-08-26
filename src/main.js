@@ -6,6 +6,8 @@ import { store } from './store'
 import vuetify from './plugins/vuetify'
 import DateFilter from './filters/date'
 import AlertCmp from './components/shared/AlertView.vue'
+import { monitorAuthState } from './firebaseConfig';  // Importe a função
+
 
 Vue.use(vuetify)
 Vue.config.productionTip = false
@@ -19,5 +21,8 @@ new Vue({
   store,
   vuetify,
   render: h => h(App),
-  // firebase
-  }).$mount('#app')
+  // Inicialize a função monitorAuthState
+  created() {
+    monitorAuthState(this.$store);  // Passa o store como argumento
+  }
+}).$mount('#app')

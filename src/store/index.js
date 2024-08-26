@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { ref, push, get} from 'firebase/database';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, database } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
 
 
@@ -78,7 +78,8 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    loadeMeetups ({commit}) {
+    // verifica o user para dar o load nos meetups dele
+    loadMeetups ({commit}) {
       commit('setLoading', true)
 
       const meetupsRef = ref(database, 'meetups');
@@ -93,6 +94,7 @@ export const store = new Vuex.Store({
               description: obj [key].description,
               imageUrl: obj [key].imageUrl,
               date: obj [key].date,
+              creatorId: obj [key].creatorId
             })
           }
           commit('setLoadedMeetups', meetups)
@@ -101,18 +103,19 @@ export const store = new Vuex.Store({
         .catch(
           (error) => {
             console.log(error)
-            commit('setLoading', true)
+            commit('setLoading', false)
           }
         )
     },
     // Criar um novo meetup e adicionar à lista.
-    createMeetup({ commit }, payload) {
+    createMeetup({ commit, getters }, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date.toISOString()
+        date: payload.date.toISOString(),
+        creatorId: getters.user.id
       }
 
       //ERRADO === firebase.database().ref('meetups').push(meetup)
@@ -177,7 +180,14 @@ export const store = new Vuex.Store({
         }
       )
     },
+    autoSignin({commit}, payload) {
+      commit('setUser', {id: payload.uid, registeredMeetups: []})
+    },
+    logout ({commit}) {
+      commit('setUser', null)
+    },
     clearError ({commit}) {
+      signOut(auth)
       commit('clearError')
     }
 

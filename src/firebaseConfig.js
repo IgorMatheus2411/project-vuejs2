@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
@@ -12,12 +12,22 @@ const firebaseConfig = {
     measurementId: "G-T005BQTYQQ"
 };
 
-// this.$store.dispatch('loadedMeetups')
-
-
 // Inicializando o Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
 export { auth, database };
+
+// Agora, monitore o estado de autenticação em um componente Vue, onde `this.$store` está disponível.
+export function monitorAuthState(store) {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            store.dispatch('autoSignin', user);  // Usar a store passada como argumento
+        }
+    });
+    
+    store.dispatch('loadMeetups');  // Carregando meetups
+}
+
+// Inicializando o Firebase
