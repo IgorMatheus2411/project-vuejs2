@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { ref, push, get} from 'firebase/database';
+import { ref, push, get, update} from 'firebase/database';
 import { uploadBytes, getDownloadURL, ref as refS } from 'firebase/storage';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, database, storage } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
@@ -12,20 +12,20 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     loadedMeetups: [
-      { imageUrl: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-        id:'01', 
-        title:'esquilo',
-        date: new Date(),
-        location: 'Sorocaba',
-        description: 'I am an animal'
-      },
-      { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', 
-        id: '03', 
-        title: 'Imagem progama',
-        date: new Date(),
-        location: 'São Paulo',
-        description: 'I am software developer'
-      },
+      // { imageUrl: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
+      //   id:'01', 
+      //   title:'esquilo',
+      //   date: new Date(),
+      //   location: 'Sorocaba',
+      //   description: 'I am an animal'
+      // },
+      // { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', 
+      //   id: '03', 
+      //   title: 'Imagem progama',
+      //   date: new Date(),
+      //   location: 'São Paulo',
+      //   description: 'I am software developer'
+      // },
     ],
     user: null,
     loading: false,
@@ -64,6 +64,21 @@ export const store = new Vuex.Store({
     createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
     },
+    updateMeetup(state, payload) {
+      const meetup = state.loadedMeetups.find(meetup => {
+        return meetup.id === payload.id
+      })
+      if(payload.title) {
+        meetup.title = payload.title
+      }  
+      if(payload.description) {
+        meetup.description = payload.description
+      }
+      if(payload.date) {
+        meetup.date = payload.date
+      }
+    },
+
     //Atualizar as informações do usuário.
     setUser (state, payload) {
       state.user = payload
@@ -95,6 +110,7 @@ export const store = new Vuex.Store({
               description: obj [key].description,
               imageUrl: obj [key].imageUrl,
               date: obj [key].date,
+              location: obj [key].location,
               creatorId: obj [key].creatorId
             })
           }
@@ -148,7 +164,6 @@ export const store = new Vuex.Store({
         .then((data) => {
           commit('createMeetup', {
             ...meetup,
-            imageUrl,
             id: data.key
           })
         }).catch((error) =>{
@@ -156,6 +171,33 @@ export const store = new Vuex.Store({
         })
       // entre em contato com o firebase e armazene isso
       // commit: Função para chamar mutations.
+    },
+    updateMeetupData ({commit}, payload) {
+      commit('setLoading', true)
+      const updateObj = {}
+      if(payload.title) {
+        updateObj.title = payload.title
+      }  
+      if(payload.description) {
+        updateObj.description = payload.description
+      }
+      if(payload.date) {
+        updateObj.date = payload.date
+      }
+        const meetupRef = ref(database, `meetups/${payload.id}`)
+      update(meetupRef, updateObj)
+        .then(() => {
+          commit('setLoading', false)
+          commit('updateMeetup', {
+            id: payload.id,
+            ...updateObj //pra passar oq foi att e carregar na hora
+          });
+    
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
     },
       //Registrar um novo usuário com email e senha usando Firebase. IMPORTANTISSIMO
     signUserUp ({commit}, payload) {
@@ -166,7 +208,7 @@ export const store = new Vuex.Store({
           user => {
             commit('setLoading', false)
             const newUser = {
-              id: user.uid,
+              id: user.user.uid,
               registeredMeetups: []
             }
             commit('setUser', newUser)
@@ -187,7 +229,7 @@ export const store = new Vuex.Store({
           user => {
             commit('setLoading', false)
             const newUser = {
-              id: user.uid,
+              id: user.user.uid,
               registeredMeetups: []
             }
             commit('setUser', newUser)

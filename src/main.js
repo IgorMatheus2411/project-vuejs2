@@ -7,10 +7,12 @@ import vuetify from './plugins/vuetify'
 import DateFilter from './filters/date'
 import AlertCmp from './components/shared/AlertView.vue'
 import { monitorAuthState } from './firebaseConfig';  // Importe a função
+import EditMeetup from './components/Meetup/Edit/EditMeetup.vue'
 
 
 Vue.use(vuetify)
 Vue.config.productionTip = false
+Vue.component('app-edit-meetup', EditMeetup)
 
 Vue.filter('date', DateFilter)
 Vue.component('app-alert', AlertCmp)

@@ -44,7 +44,7 @@
                         id="description"
                         v-model="description"
                         label="Description"
-                        multi-line
+                        textarea
                         required
                         class="mb-4"
                     ></v-text-field>

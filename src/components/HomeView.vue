@@ -40,6 +40,9 @@
         computed: {
             meetups() {
                 return this.$store.getters.featuredMeetups
+            },
+            loading() {
+                return this.$store.getters.loading
             }
         },
         methods: {
