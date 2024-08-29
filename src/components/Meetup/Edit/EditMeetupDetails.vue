@@ -35,7 +35,7 @@
         <!-- Button to close the dialog without saving changes -->
         <v-btn text class="gray--text" darken-1 @click="editDialog = false">Close</v-btn>
         <!-- Button to save changes -->
-        <v-btn text class="green lighten-1" darken-1 @click="onSaveChanges">Save</v-btn>
+        <v-btn text class="green--text" darken-1 @click="onSaveChanges">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

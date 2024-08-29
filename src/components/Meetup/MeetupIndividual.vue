@@ -28,7 +28,7 @@
               <div>{{ meetup.description }}</div>
             </v-card-text>
             <v-card-actions class="d-flex justify-end">
-              <v-btn color="primary">Register</v-btn>
+              <app-meetup-register-dialog :meetupId="meetup.id"></app-meetup-register-dialog>
             </v-card-actions>
           </v-card>
         </v-flex>
