@@ -15,7 +15,7 @@
           label="Title"
           required
           v-model="editedTitle"
-          class="mb-4"
+          class="mb-4 mt-6" 
         ></v-text-field>
 
         <v-text-field
@@ -25,14 +25,14 @@
           textarea
           required
           v-model="editedDescription"
-          class="mb-4"
         ></v-text-field>
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-actions>
-        <v-btn flat class="blue--text" darken-1 @click="editDialog = false">Close</v-btn>
-        <v-btn flat class="blue--text" darken-1 @click="onSaveChanges">Save</v-btn>
-      </v-card-actions>
+        <v-card-actions class="d-flex justify-space-between">
+            <v-btn text class="gray--text" darken-1 @click="editDialog = false">Close</v-btn>
+            <v-btn text class="green lighten-1" darken-1 @click="onSaveChanges">Save</v-btn>
+        </v-card-actions>
+
     </v-card>
   </v-dialog>
 </template>

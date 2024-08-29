@@ -15,12 +15,16 @@
               <h6 class="primary--text">{{ meetup.title }}</h6>
               <template v-if="userIsCreator">
                 <v-spacer></v-spacer>
-                <app-edit-meetup :meetup="meetup"></app-edit-meetup>
+                <app-edit-meetup-details :meetup="meetup"></app-edit-meetup-details>
               </template>
             </v-card-title>
             <v-img height="400px" :src="meetup.imageUrl"></v-img>
             <v-card-text>
               <div class="primary--text">{{ meetup.date | date }} - {{ meetup.location }}</div>
+            
+                <v-spacer></v-spacer>
+                <app-edit-meetup-date v-if="userIsCreator" :meetup="meetup"></app-edit-meetup-date>
+                <app-edit-meetup-time v-if="userIsCreator" :meetup="meetup"></app-edit-meetup-time>
               <div>{{ meetup.description }}</div>
             </v-card-text>
             <v-card-actions class="d-flex justify-end">
