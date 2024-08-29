@@ -3,44 +3,46 @@ import Vuex from 'vuex'
 import { ref, push, get, update} from 'firebase/database';
 import { uploadBytes, getDownloadURL, ref as refS } from 'firebase/storage';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { auth, database, storage } from '../firebaseConfig'; // Ajuste o caminho conforme necessário
-
-
+import { auth, database, storage } from '../firebaseConfig'; // Import Firebase configuration
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
     loadedMeetups: [
+      // Sample data for loaded meetups
       // { imageUrl: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
       //   id:'01', 
-      //   title:'esquilo',
+      //   title:'squirrel',
       //   date: new Date(),
       //   location: 'Sorocaba',
       //   description: 'I am an animal'
       // },
       // { imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrtSaiD7aywdj40H5cHgH1foGHUdwnmM-FZA&s', 
       //   id: '03', 
-      //   title: 'Imagem progama',
+      //   title: 'Program Image',
       //   date: new Date(),
       //   location: 'São Paulo',
-      //   description: 'I am software developer'
+      //   description: 'I am a software developer'
       // },
     ],
-    user: null,
-    loading: false,
-    error: null,
+    user: null, // Stores the currently logged-in user
+    loading: false, // Indicates if data is currently being loaded
+    error: null, // Stores error messages
   }, 
   getters: {
     loadedMeetups (state) {
+      // Returns all loaded meetups, sorted by date
       return state.loadedMeetups.sort((meetupA, meetupB) => {
         return meetupA.date > meetupB.date
       })
     },
     featuredMeetups (state, getters) {
+      // Returns the first 5 meetups from the loaded meetups
       return getters.loadedMeetups.slice(0, 5)
     },
     loadedMeetup (state) {
+      // Returns a meetup based on its ID
       return (meetupId) => {
         return state.loadedMeetups.find((meetup) => {
           return meetup.id === meetupId
@@ -48,23 +50,29 @@ export const store = new Vuex.Store({
       }
     },
     user (state) {
+      // Returns the current user
       return state.user
     },
     loading (state) {
+      // Returns the loading state
       return state.loading
     },
     error (state) {
+      // Returns the current error message
       return state.error
     }
   },
   mutations: {
     setLoadedMeetups (state, payload){
+      // Sets the loaded meetups in the state
       state.loadedMeetups = payload
     },
     createMeetup(state, payload) {
+      // Adds a new meetup to the loaded meetups list
       state.loadedMeetups.push(payload)
     },
     updateMeetup(state, payload) {
+      // Updates an existing meetup based on the payload
       const meetup = state.loadedMeetups.find(meetup => {
         return meetup.id === payload.id
       })
@@ -79,22 +87,25 @@ export const store = new Vuex.Store({
       }
     },
 
-    //Atualizar as informações do usuário.
+    // Update the user's information
     setUser (state, payload) {
       state.user = payload
     },
     setLoading (state, payload) {
+      // Sets the loading state
       state.loading = payload
     },
     setError (state, payload) {
+      // Sets the error message
       state.error = payload
     },
     clearError (state) {
+      // Clears the error message
       state.error = null
     }
   },
   actions: {
-    // verifica o user para dar o load nos meetups dele
+    // Loads meetups from Firebase and commits them to the state
     loadMeetups ({commit}) {
       commit('setLoading', true)
 
@@ -124,11 +135,11 @@ export const store = new Vuex.Store({
           }
         )
     },
-    // Criar um novo meetup e adicionar à lista.
+    // Creates a new meetup and adds it to Firebase
     async createMeetup({ commit, getters }, payload) {
 
       if (!payload.image) {
-        console.error('Imagem não fornecida')
+        console.error('Image not provided')
         return
       }
 
@@ -144,7 +155,7 @@ export const store = new Vuex.Store({
       }).then((url) => {
         imageUrl = url;
       }).catch(() => {
-        console.log('ERRO')
+        console.log('ERROR')
       });
 
       const meetup = {
@@ -156,9 +167,7 @@ export const store = new Vuex.Store({
         creatorId: getters.user.id
       }
 
-      //ERRADO === firebase.database().ref('meetups').push(meetup)
-
-      // Cria uma referência para o local onde os meetups serão armazenados
+      // Create a reference for where the meetups will be stored
       const meetupsRef = ref(database, 'meetups');
       push(meetupsRef, meetup)
         .then((data) => {
@@ -169,9 +178,8 @@ export const store = new Vuex.Store({
         }).catch((error) =>{
           console.log(error);
         })
-      // entre em contato com o firebase e armazene isso
-      // commit: Função para chamar mutations.
     },
+    // Updates a meetup's data in Firebase
     updateMeetupData ({commit}, payload) {
       commit('setLoading', true)
       const updateObj = {}
@@ -190,7 +198,7 @@ export const store = new Vuex.Store({
           commit('setLoading', false)
           commit('updateMeetup', {
             id: payload.id,
-            ...updateObj //pra passar oq foi att e carregar na hora
+            ...updateObj // Updates the meetup in the state
           });
     
         })
@@ -199,7 +207,7 @@ export const store = new Vuex.Store({
           commit('setLoading', false)
         })
     },
-      //Registrar um novo usuário com email e senha usando Firebase. IMPORTANTISSIMO
+    // Registers a new user with email and password using Firebase
     signUserUp ({commit}, payload) {
       commit('setLoading', true)
       commit('clearError')
@@ -221,6 +229,7 @@ export const store = new Vuex.Store({
         }
       )
     },
+    // Signs in an existing user with email and password using Firebase
     signUserIn ({commit}, payload) {
       commit('setLoading', true)
       commit('clearError')
@@ -242,17 +251,18 @@ export const store = new Vuex.Store({
         }
       )
     },
+    // Automatically signs in a user with their UID
     autoSignin({commit}, payload) {
       commit('setUser', {id: payload.uid, registeredMeetups: []})
     },
+    // Logs out the current user
     logout ({commit}) {
       commit('setUser', null)
     },
+    // Clears the error message and signs out the user
     clearError ({commit}) {
       signOut(auth)
       commit('clearError')
     }
-
   },
- 
 })
