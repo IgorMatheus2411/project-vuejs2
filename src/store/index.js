@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { ref, push, get, update} from 'firebase/database';
+import { ref, remove, push, get, update} from 'firebase/database';
 import { uploadBytes, getDownloadURL, ref as refS } from 'firebase/storage';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth, database, storage } from '../firebaseConfig'; // Import Firebase configuration
@@ -65,7 +65,7 @@ export const store = new Vuex.Store({
   mutations: {
     registerUserForMeetup (state, payload) {
       const id = payload.id
-      if (state.user.registeredMeetups.finIndex(meetup => meetup.id === id) >= 0) {
+      if (state.user.registeredMeetups.findIndex(meetup => meetup === id) >= 0) {
         return
       } 
       state.user.registeredMeetups.push(id)
@@ -137,7 +137,7 @@ export const store = new Vuex.Store({
             commit('setLoading', false)
           })
     },
-    unregisterUserFromMeetup ({commit, getters}, payload) {
+    async unregisterUserFromMeetup ({commit, getters}, payload) {
       commit('setLoading', true)
       const user = getters.user
       if (!user.fbKeys) {
@@ -145,8 +145,8 @@ export const store = new Vuex.Store({
       }
       const fbKey = user.fbKeys[payload]
 
-      const usersRef = ref(database, '/users/' + user.id + '/registrations/').child(fbKey)
-      .remove(payload, usersRef)
+      const usersRef = ref(database, '/users/' + user.id + '/registrations/' + fbKey)
+        await remove(usersRef)
         .then(() => {
           commit('setLoading', false)
           commit('unregisterUserFromMeetup', payload)
@@ -312,13 +312,46 @@ export const store = new Vuex.Store({
           fbKeys: {}
         })
     },
+    async fetchUserData ({commit, getters}) {
+      commit('setLoading', true)
+      const userId = getters.user.id;
+      const fetchRef = ref(database, '/users/' + userId + '/registrations/'); // Cria a referência ao caminho
+    
+      get(fetchRef)
+      .then((data) => {
+        const dataPairs = data.val(); // Recupera os dados (pode ser null se não houver dados)
+        let registeredMeetups = []
+        let swappedPairs = {}
+
+        for (let key in dataPairs) {
+          registeredMeetups.push(dataPairs[key])
+          swappedPairs[dataPairs[key]] = key
+          
+        }
+        const updatedUser = {
+          id: getters.user.id,
+          registeredMeetups: registeredMeetups,
+          fbKeys: swappedPairs
+        }
+        commit('setLoading', false)
+        commit('setUser', updatedUser)
+  
+      })
+      .catch((error) => {
+        console.error(error)
+        commit('setLoading', false)
+
+      })
+    
+
+    },
     // Logs out the current user
     logout ({commit}) {
+      signOut(auth)
       commit('setUser', null)
     },
     // Clears the error message and signs out the user
     clearError ({commit}) {
-      signOut(auth)
       commit('clearError')
     }
   },

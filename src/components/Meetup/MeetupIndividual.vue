@@ -9,7 +9,8 @@
             :size="70"
           ></v-progress-circular>
         </v-flex>
-        <v-flex xs12 class="mt-5" v-else>
+
+        <v-flex xs12 class="mt-5" v-else-if="meetup">
           <v-card class="pa-1">
             <v-card-title>
               <h6 class="primary--text">{{ meetup.title }}</h6>
@@ -19,6 +20,7 @@
               </template>
             </v-card-title>
             <v-img height="400px" :src="meetup.imageUrl"></v-img>
+
             <v-card-text>
               <div class="primary--text">{{ meetup.date | date }} - {{ meetup.location }}</div>
             
@@ -28,9 +30,16 @@
               <div>{{ meetup.description }}</div>
             </v-card-text>
             <v-card-actions class="d-flex justify-end">
-              <app-meetup-register-dialog :meetupId="meetup.id"></app-meetup-register-dialog>
+              <app-meetup-register-dialog 
+              :meetupId="meetup.id" 
+              v-if="userIsAuthenticated && !userIsCreator"
+              >
+            </app-meetup-register-dialog>
             </v-card-actions>
           </v-card>
+        </v-flex>
+        <v-flex xs12 v-else>
+          <p>Error to search Meetup</p> 
         </v-flex>
       </v-layout>
     </v-container>

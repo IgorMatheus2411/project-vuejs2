@@ -8,7 +8,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyB1U4lrxQQmtcx8JSV6O_Piota2WI3nCEY",
     authDomain: "project-vuejs2.firebaseapp.com",
     projectId: "project-vuejs2",
-    storageBucket: "gs://project-vuejs2.appspot.com",  
+    storageBucket: "project-vuejs2.appspot.com",  
 };
 
 // Inicializando o Firebase
@@ -23,7 +23,8 @@ export { auth, database, storage };
 export function monitorAuthState(store) {
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            store.dispatch('autoSignin', user);  // Usar a store passada como argumento
+            store.dispatch('autoSignin', user)  // Usar a store passada como argumento
+            store.dispatch('fetchUserData')  // Usar a store passada como argumento
         }
     });
     
