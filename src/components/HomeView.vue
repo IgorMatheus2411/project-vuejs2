@@ -1,7 +1,11 @@
 <template>
     <v-container>
         <!-- Layout for navigation buttons -->
-        <v-layout row wrap>
+        <v-layout 
+            v-if="Object.keys(user).length"
+            row 
+            wrap
+        >
             <!-- Button to explore meetups, visible on small and extra small screens aligned to the right -->
             <v-flex xs12 sm6 class="text-xs-center text-sm-right">
                 <v-btn large to="/meetup" class="info ma-2">Explore Meetups</v-btn>
@@ -15,7 +19,10 @@
         <!-- Carousel for featured meetups -->
         <v-layout row wrap class="mt-5">
             <v-flex xs12>
-                <v-carousel style="cursor: pointer;">
+                <v-carousel
+                    v-if="meetups.length"
+                    style="cursor: pointer;"
+                >
                     <!-- Carousel items for each meetup -->
                     <v-carousel-item
                         v-for="meetup in meetups"
@@ -44,6 +51,9 @@
 <script>
     export default {
         computed: {
+            user() {
+                return this.$store.getters.user
+            },
             // Get featured meetups from the Vuex store
             meetups() {
                 return this.$store.getters.featuredMeetups

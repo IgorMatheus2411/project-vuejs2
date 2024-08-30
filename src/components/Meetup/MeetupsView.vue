@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container >
       <!-- Layout to display meetups -->
       <v-layout row wrap v-for="meetup in meetups" :key="meetup.id" class="mb-2">
         
@@ -47,7 +47,7 @@
           :size="70"
         ></v-progress-circular>
       </v-flex>
-    </v-container>
+    </v-container> 
   </template>
   
   <script>
@@ -57,6 +57,7 @@
       meetups() {
         return this.$store.getters.loadedMeetups;
       },
+      
       // Checks if data is loading
       loading() {
         return this.$store.getters.loading;

@@ -100,8 +100,9 @@ export default {
   },
   methods: {
     // Logout do usuário
-    onLogout () {
-      this.$store.dispatch('logout')
+    async onLogout () {
+      await this.$store.dispatch('logout')
+      this.$router.push('/')
     }
   }
 }

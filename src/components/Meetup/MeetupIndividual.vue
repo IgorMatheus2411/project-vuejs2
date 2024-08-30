@@ -38,9 +38,6 @@
             </v-card-actions>
           </v-card>
         </v-flex>
-        <v-flex xs12 v-else>
-          <p>Error to search Meetup</p> 
-        </v-flex>
       </v-layout>
     </v-container>
   </template>
